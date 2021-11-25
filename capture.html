@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture and Bubbling</title>
+  <style>
+    #elem1 {
+      background-color: green;
+      position: relative;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #elem2 {
+      background-color: blue;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 150px;
+      height: 150px;
+    }
+
+    #elem3 {
+      background-color: red;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 100px;
+      height: 100px;
+      line-height: 25px;
+    }
+
+    #elem4 {
+      background-color: yellow;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div id="elem1">1
+    <section id="elem2">2
+      <article id="elem3">3
+        <main id="elem4">4
+        </main>
+      </article>
+    </section>
+  </div>
+  <input type=text>
+  <script>
+    let elem1 = document.querySelector('#elem1');
+
+    document.addEventListener('keypress', event => {
+      setTimeout(() => alert(event.code), 7000);
+    });
+
+    elem1.addEventListener('click', event => {
+      setTimeout(() => alert(event.target.tagName), 7000);
+    });
+  </script>
+</body>
+</html>
