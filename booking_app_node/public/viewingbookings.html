@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viewing Bookings</title>
+</head>
+<body>
+  <h1>Bookings</h1>
+  <ul id="dates"></ul>
+  <script>
+    function displayBookingDates(dates) {
+      let ul = document.getElementById('dates');
+      dates.forEach(date => {
+        let li = document.createElement('li');
+        li.textContent = date;
+        ul.appendChild(li);
+      })
+    };
+
+    function displayDetails(details, heading) {
+      let subHeading = document.createElement('ul');
+      details.forEach(detail => {
+        let inner = document.createElement('li');
+        inner.textContent = `${detail[0]} | ${detail[1]} | ${detail[2]}`
+        subHeading.appendChild(inner);
+      })
+      heading.appendChild(subHeading);
+    }
+
+    (() => {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/bookings');
+      xhr.responseType = 'json';
+      xhr.send();
+      xhr.addEventListener('load', () => {
+        let dates = xhr.response;
+        displayBookingDates(dates);
+      })
+    })();
+
+    let ul = document.getElementById('dates');
+    ul.addEventListener('click', event => {
+      if (event.target.tagName === 'UL') {
+        return;
+      }
+
+      if (event.target.childElementCount === 0) {
+        let currentDate = event.target.textContent;
+        let getDetails = new XMLHttpRequest();
+        getDetails.open('GET', `/api/bookings/${currentDate}`)
+        getDetails.responseType = 'json'
+        getDetails.send();
+        getDetails.addEventListener('load', () => {
+          let details = getDetails.response;
+          displayDetails(details, event.target);
+        });
+      };
+    });
+
+    function cancelSchedule(scheduleId) {
+      let request = new XMLHttpRequest();
+      request.open('DELETE', `/api/schedules/${scheduleId}`);
+      request.send();
+      request.addEventListener('load', () => {
+        alert(request.responseText);
+      })
+    }
+
+    function cancelBooking(bookingId) {
+      let request = new XMLHttpRequest();
+      request.open('PUT', `/api/bookings/${bookingId}`);
+      request.send();
+      request.addEventListener('load', () => {
+        alert(request.responseText);
+      });
+    }
+  </script>
+</body>
+</html>

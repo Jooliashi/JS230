@@ -1,14 +1,17 @@
-let header = document.querySelector('body > header');
-document.body.insertAdjacentElement('afterbegin', header);
-header.insertAdjacentElement('afterbegin', document.querySelector("main > h1"));
-
-let figures = document.querySelectorAll('figure');
-figures = Array.prototype.slice.call(figures).reverse();
+let main = document.querySelector('body main');
+let header = main.nextElementSibling;
+document.body.insertBefore(header, main);
+let h1 = main.querySelector('h1');
+header.insertBefore(h1, header.firstChild)
+let figures = main.querySelectorAll('figure')
+figures = Array.from(figures).reverse();
+let article = main.querySelector('article');
 figures.forEach(figure => {
-  document.querySelector('article').appendChild(figure);
-});
-
-let babyMopCaption = figures[0].querySelector('figcaption');
-let chinStickCaption = figures[1].querySelector('figcaption');
-figures[0].insertAdjacentElement('beforeend', chinStickCaption);
-figures[1].insertAdjacentElement('beforeend', babyMopCaption);
+  article.insertAdjacentElement("beforeend", figure);
+})
+let babyCaption = figures[0].querySelector('figcaption');
+let chinCaption = figures[1].querySelector('figcaption');
+let babyClone = babyCaption.cloneNode(true);
+let chinClone = chinCaption.cloneNode(true);
+figures[1].replaceChild(babyClone, chinCaption);
+figures[0].replaceChild(chinClone, babyCaption);

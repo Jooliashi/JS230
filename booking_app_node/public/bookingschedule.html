@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    ul {
+      list-style: none;
+    }
+
+    input {
+      margin-left: 10px;
+    }
+    #new-form {
+      background-color: grey;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Schedules</h1>
+  <form method="post" action="/api/bookings">
+    <dl>
+      <dt><label for="schedule">Please select one schedule</label></dt>
+      <dd><select name="schedule" id="schedule"></select></dd>
+      <dt><label for="email">Email</label></dt>
+      <dd><input type="email" id="email" name="email"/></dd>
+    </dl>
+    <input type="submit">
+  </form>
+  <script>
+    function matchStaffName(staff_id) {
+      let name;
+      staffs.forEach(staff => {
+        if (staff.id === staff_id) {
+          name = staff.name;
+        }
+      })
+      return name;
+    }
+
+    const form = document.querySelector('form');
+    let schedules = [];
+    let staffs = [];
+
+    // get staffs
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/staff_members');
+    xhr.responseType = 'json'
+    xhr.addEventListener('load', event => {
+      staffs = xhr.response;
+    });
+    xhr.send();
+
+    // get schedules and display
+    let request = new XMLHttpRequest();
+    request.open('GET', '/api/schedules');
+    request.responseType = 'json';
+    request.addEventListener('load', () => {
+      schedules = request.response.filter(schedule => schedule.student_email === null);
+      let select = document.querySelector('select');
+      schedules.forEach(schedule => {
+        let option = document.createElement('option');
+        option.value = schedule.id;
+        let staff_name = matchStaffName(schedule.staff_id);
+        option.textContent = `${staff_name} | ${schedule.date} | ${schedule.time}`
+        select.appendChild(option);
+      });
+    })
+    request.send();
+
+    function fromInputsToJson() {
+      let json = {};
+      let data = new FormData(form);
+      json.id = Number(data.get("schedule"));
+      json.student_email = data.get('email');
+      return json;
+    }
+
+    form.addEventListener('submit', () => {
+      event.preventDefault();
+      let data = JSON.stringify(fromInputsToJson());
+      let request = new XMLHttpRequest();
+      request.open('POST', form.action);
+      request.setRequestHeader('Content-Type', 'application/json')
+      request.send(data);
+      request.addEventListener('load', () => {
+        if (request.status === 204) {
+          alert('schedule has been booked')
+          window.location.href = '/bookingschedule.html'
+        } else if (request.responseText.match('Schedule')) {
+          alert(request.responseText) 
+        } else {
+          alert(request.responseText)
+          let email = JSON.parse(data).student_email;
+          let sequence = Number(request.responseText.match(/[0-9]{6}/)[0])
+          newStudentForm(sequence, email);
+          let newForm = document.getElementById('new-form');
+          newForm.addEventListener('submit', event => {
+            event.preventDefault();
+            let data2 = new FormData(newForm);
+            let request2 = new XMLHttpRequest();
+            request2.open('POST', newForm.action);
+            request2.addEventListener('load', () => {
+              alert(request2.responseText);
+              if (request2.status === 201) {
+                newForm.reset();
+                form.dispatchEvent(new Event('submit', {cancelable: true}));
+              }
+            });
+            request2.send(data2);
+          });
+        }
+      });
+      
+    })
+
+    function newStudentForm(sequence, email) {
+      let newForm = document.createElement('form')
+      newForm.id = 'new-form';
+      newForm.setAttribute('action', '/api/students');
+      newForm.setAttribute('method', 'POST');
+      form.insertAdjacentElement("afterend", newForm);
+
+      let h1 = document.createElement('h1');
+      h1.textContent = "Please provide new student details"
+      newForm.appendChild(h1);
+
+      let ul = document.createElement('ul');
+      newForm.appendChild(ul)
+
+      let emailLi = document.createElement('li');
+      ul.appendChild(emailLi);
+      let emailLabel = document.createElement('label');
+      emailLabel.setAttribute("for", "email");
+      emailLabel.textContent = 'Email'
+      let emailInput = document.createElement('input');
+      emailInput.setAttribute('name', 'email');
+      emailInput.setAttribute('id', 'email');
+      emailInput.setAttribute('type', 'email');
+      emailInput.setAttribute('value', email)
+      emailLabel.appendChild(emailInput);
+      emailLi.appendChild(emailLabel);
+
+      let nameLi = document.createElement('li');
+      ul.appendChild(nameLi);
+      let nameLabel = document.createElement('label');
+      nameLabel.setAttribute("for", "name");
+      nameLabel.textContent = 'Name'
+      let nameInput = document.createElement('input');
+      nameInput.setAttribute('name', 'name');
+      nameInput.setAttribute('id', 'name');
+      nameInput.setAttribute('type', 'text');
+      nameLabel.appendChild(nameInput);
+      nameLi.appendChild(nameLabel);
+
+      let sequenceLi = document.createElement('li');
+      ul.appendChild(sequenceLi);
+      let sequenceLabel = document.createElement('label');
+      sequenceLabel.setAttribute("for", "booking_sequence");
+      sequenceLabel.textContent = 'Booking Sequence'
+      let sequenceInput = document.createElement('input');
+      sequenceInput.setAttribute('name', 'booking_sequence');
+      sequenceInput.setAttribute('id', 'booking_sequence');
+      sequenceInput.setAttribute('type', 'number');
+      sequenceInput.setAttribute('value', sequence)
+      sequenceLabel.appendChild(sequenceInput);
+      sequenceLi.appendChild(sequenceLabel);
+      
+      let submit = document.createElement('input');
+      submit.setAttribute('type', 'submit');
+      newForm.appendChild(submit);
+    }
+  </script>
+</body>
+</html>

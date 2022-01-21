@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .x {
+      position: absolute;
+      transform: rotate(45deg);
+      top: 20px;
+      left: 20px;
+    }
+
+    .x .horizontal {
+      width: 45px;
+      height: 5px;
+      position: absolute;
+      left: -20px;
+      background: red;
+    }
+
+    .x .vertical {
+      height: 45px;
+      width: 5px;
+      background: red;
+      position: absolute;
+      left: 0px;
+      top: -20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="x">
+    <div class="horizontal"></div>
+    <div class="vertical"></div>
+  </div>
+  <script>
+    document.addEventListener('mousemove', e => {
+      let x = document.querySelector('.x');
+      x.style.top = String(event.clientY) + 'px';
+      x.style.left = String(event.clientX) + 'px';
+    });
+
+    document.addEventListener('keydown', e => {
+      let horizontal = document.querySelector('.horizontal');
+      let vertical = document.querySelector('.vertical')
+      let key = e.key;
+      if (key === 'g') {
+        horizontal.style.background = 'green';
+        vertical.style.background = 'green';
+      } else if (key === 'b') {
+        horizontal.style.background = 'blue';
+        vertical.style.background = 'blue';
+      } else if (key === 'r') {
+        horizontal.style.background = 'red';
+        vertical.style.background = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
