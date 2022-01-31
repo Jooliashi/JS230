@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Groceries</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="stylesheets/groceries.css" />
+    <link rel="stylesheet" href="stylesheets/print.css" media="print" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  </head>
+  <body>
+    <main>
+      <form action="" method="post">
+        <h2>Add an item</h2>
+        <fieldset>
+          <label for="name">Item name</label>
+          <input type="text" name="name" id="name" />
+          <label for="quantity">Quantity</label>
+          <input type="text" name="quantity" id="quantity" />
+          <input type="submit" value="Add" />
+        </fieldset>
+      </form>
+      <h1>Groceries</h1>
+      <ul id="grocery-list"></ul>
+    </main>
+    <script>
+      $(function() {
+        $('form').submit(function(event) {
+          event.preventDefault()
+          let data = new FormData(this)
+          let itemName = data.get('name');
+          let quantity = data.get('quantity')
+          quantity = quantity ? quantity + ' ' : '1 '
+          let groceryTemplate = Handlebars.compile($('#groceryList').html());
+          let $list = $('ul');
+          let groceryItem = groceryTemplate({quantity, itemName});
+          $list.append(groceryItem);
+          this.reset();
+      });
+    });
+    </script>
+    <script id="groceryList" type="text/x-handlebars">
+      <li>{{quantity}}{{itemName}}</li>
+    </script>
+  </body>
+</html>
