@@ -1,0 +1,36 @@
+html, body {
+  padding: 0;
+  margin: 0;
+}
+body{
+  background-color: darkslateblue;
+}
+
+h1 {
+  text-align: center;
+}
+
+div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+figure {
+  width: 250px;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible;
+}

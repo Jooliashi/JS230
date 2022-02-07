@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>Car</title>
+</head>
+<body>
+  <header>
+    <h1>Buy Used Cars</h1>
+  </header>
+    <div id="cars"></div>
+
+  <script id='modelTemplate' type='text/x-handlebars'>
+    <option value="">All</option>
+        {{#each model}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+  </script>
+
+  <script id='selectTemplate' type='text/x-handlebars'>
+    <div id="filters">
+      <label for="make">Make</label>
+      <select name="make" id="make">
+        <option value="">All</option>
+        {{#each make}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+      <label for="model">Model</label>
+      <select name="model" id="model">
+        {{>modelTemplate}}
+      </select>
+      <label for="price">Price</label>
+      <select name="price" id="price">
+        <option value="">Any</option>
+        {{#each price}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+      <label for="year">Year</label>
+      <select name="year" id="year">
+        <option value="">Any</option>
+        {{#each year}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+      <button class="filter_btn">Filter</button>
+    </div>
+  </script>
+
+  <script id='carTemplate' type='text/x-handlebars'>
+    {{#each cars}}
+    <div class="car">
+      <figure>
+        <img src="./{{image}}">
+      </figure>
+      <h2>{{make}} {{model}}</h2>
+      <p class="year">Year: {{year}}</p>
+      <p class="price">Price: ${{price}}</p>
+      <a href="#">Buy</a>
+    </div>
+    {{/each}}
+  </script>
+
+  <script>
+    function unique(arr) {
+      let uniqued = [];
+      arr.forEach(item => {
+        if (!uniqued.includes(item)) {
+          uniqued.push(item);
+        }
+      })
+      return uniqued;
+    }
+    const cars = [
+      { make: 'Honda', image: 'images/honda-accord-2005.jpeg', model: 'Accord', year: 2005, price: 7000 },
+      { make: 'Honda', image: 'images/honda-accord-2008.jpeg', model: 'Accord', year: 2008, price: 11000 },
+      { make: 'Toyota', image: 'images/toyota-camry-2009.jpeg', model: 'Camry', year: 2009, price: 12500 },
+      { make: 'Toyota', image: 'images/toyota-corrolla-2016.jpeg', model: 'Corolla', year: 2016, price: 15000 },
+      { make: 'Suzuki', image: 'images/suzuki-swift-2014.jpeg', model: 'Swift', year: 2014, price: 9000 },
+      { make: 'Audi', image: 'images/audi-a4-2013.jpeg', model: 'A4', year: 2013, price: 25000 },
+      { make: 'Audi', image: 'images/audi-a4-2013.jpeg', model: 'A4', year: 2013, price: 26000 },
+    ];
+
+    class App {
+      constructor() {
+        this.cars = cars;
+        this.carContainer = document.querySelector('#cars')
+        this.carTemplate = Handlebars.compile(document.querySelector('#carTemplate').innerHTML);
+        this.filterTemplate = Handlebars.compile(document.querySelector('#selectTemplate').innerHTML)
+        this.modelTemplate = Handlebars.compile(document.querySelector('#modelTemplate').innerHTML)
+        Handlebars.registerPartial('modelTemplate', document.querySelector('#modelTemplate').innerHTML)
+        this.renderCars(this.cars);
+        this.renderSelections();
+        this.button = document.querySelector('.filter_btn')
+        this.button.addEventListener('click', this.handleFilter.bind(this));
+        document.querySelector('#make').addEventListener('change', (e) => {
+          this.changeModelFilter();
+        })
+        
+      }
+
+      renderCars(cars) {
+        let carsHtml = this.carTemplate({cars});
+        this.carContainer.innerHTML = carsHtml;
+      }
+
+      renderSelections() {
+        let input = {}
+        input.make = unique(this.cars.map(car => car.make))
+        input.model = unique(this.cars.map(car => car.model))
+        input.year = unique(this.cars.map(car => car.year))
+        input.price = unique(this.cars.map(car => car.price))
+        let selectHtml = this.filterTemplate(input);
+        document.querySelector('header').insertAdjacentHTML('beforeend', selectHtml)
+      }
+
+      handleFilter(e) {
+        let criteria = [...document.querySelectorAll('select')]
+          .filter(select => select.value)
+        let displayCars = this.cars;
+        criteria.forEach(rule => {
+          displayCars = displayCars.filter(car => String(car[rule.name]) === rule.value);
+        })
+        this.renderCars(displayCars);
+      }
+
+      changeModelFilter() {
+        let make = document.querySelector('#make').value;
+        let displayFilter = unique(this.cars.filter(car => car.make === make).map(car => car.model));
+        let newModel = this.modelTemplate({model: displayFilter})
+        document.querySelector('#model').innerHTML = newModel;
+      }
+    }
+
+    new App();
+  </script>
+</body>
+</html>

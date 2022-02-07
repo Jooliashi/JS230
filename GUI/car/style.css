@@ -1,0 +1,71 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background:sandybrown;
+  height: 100px;
+  padding: 20px;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: 4px;
+}
+
+header h1 {
+  margin: 0;
+  padding-left: 10px;
+  color: white;
+  font-size: 25px;
+}
+
+#filters {
+  padding-left: 10px;
+  margin-top: 10px;
+  padding-bottom: 10px;
+}
+
+label {
+  color: white;
+}
+
+select, .filter_btn {
+  color: white;
+  border: solid 1px white;
+  background: sandybrown;
+  margin: 0px 20px;
+  border-radius: 5px;
+}
+
+#cars {
+  margin-top: 30px;
+}
+
+.car {
+  display: inline-block;
+  width: 200px;
+  margin: 0 0 20px 20px;
+  border-radius: 4px;
+}
+
+h2 {
+  margin: 20px 0 0 20px;
+  font-size: 22px;
+}
+
+.car a {
+  display: inline-block;
+  padding: 5px 10px;
+  background: sandybrown;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.car h2, .car p, .car a{
+  margin-top: 5px;
+}
+
+.car img {
+  width: 100%;
+}

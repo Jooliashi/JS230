@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>Delete Confirmation</title>
+</head>
+<body>
+  <h2>Todos</h2>
+  <ul id="todos"></ul>
+  <div class="overlay"></div>
+  <div class="confirm_prompt"></div>
+  <div class="context_menu"></div>
+
+  <script id='todoTemplate' type='text/x-handlebars'>
+    {{#each todos}}
+    <li data-id="{{id}}">{{title}}</li>
+    {{/each}}
+  </script>
+
+  <script id='confirmTemplate' type='text/x-handlebars'>
+    <div class="confirm_wrapper" data-id="{{id}}">
+      <p>Are you sure you want to delete?</p>
+      <div class="actions">
+        <a href="#" class="confirm_yes">Yes</a>
+        <a href="#" class="confirm_no">No</a>
+      </div>
+    </div>
+  </script>
+
+  <script id="context">
+    <ul>
+      <li>Edit Todo</li>
+      <li>Show Details</li>
+      <li data-id="{{id}}" class="delete">Delete</li>
+    </ul>
+  </script>
+  <script>
+    const todos = [
+      { id: 1, title: 'Homework' },
+      { id: 2, title: 'Shopping' },
+      { id: 3, title: 'Calling Mom' },
+      { id: 4, title: 'Coffee with John '}
+    ];
+
+    class App {
+      constructor() {
+        this.todos = todos;
+        this.todosTemplate = Handlebars.compile(document.querySelector('#todoTemplate').innerHTML);
+        this.confirmTemplate = Handlebars.compile(document.querySelector('#confirmTemplate').innerHTML)
+        this.contextTemplate = Handlebars.compile(document.querySelector('#context').innerHTML)
+        this.ul = document.querySelector('ul');
+        this.confirm = document.querySelector('.confirm_prompt');
+        this.context = document.querySelector('.context_menu')
+        this.renderTodos()
+        this.ul.addEventListener('contextmenu', (e) => {
+          if (e.target.tagName === 'LI') {
+            e.preventDefault();
+            this.renderContext(e.target.dataset.id);
+            this.context.style.display = 'block'
+            this.context.style.left = e.pageX + "px";
+            this.context.style.top = e.pageY + "px";
+          }
+        })
+
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete')) {
+            this.handleDeleteClick(e);
+          }
+        })
+
+        document.addEventListener('click', this.hideContext.bind(this));
+      }
+
+      renderContext(todoId) {
+        let context = this.contextTemplate({id: todoId})
+        this.context.innerHTML = context;
+      }
+
+      hideContext() {
+        this.context.innerHTML = '';
+      }
+
+      renderTodos() {
+        this.ul.innerHTML = this.todosTemplate({todos: this.todos});
+      }
+
+      showPrompt(todoId) {
+        this.confirm.innerHTML = this.confirmTemplate({id: todoId});
+        this.confirm.style.visibility = "visible"
+        this.bindPromptEvents();
+      }
+
+      bindPromptEvents() {
+        this.confirm.querySelector('.confirm_no').addEventListener('click', this.hidePrompt.bind(this));
+        this.confirm.querySelector('.confirm_yes').addEventListener('click', this.handleConfirmYes.bind(this));
+      }
+
+      hidePrompt() {
+        this.confirm.innerHTML = ''
+        this.confirm.style.visibility = "hidden"
+      }
+
+      handleDeleteClick(e) {
+        e.preventDefault();
+        console.log(e.target)
+        let todoId = Number(e.target.dataset.id);
+        this.showPrompt(todoId);
+      }
+
+      handleConfirmYes(e) {
+        let todoId = Number(e.target.parentNode.parentNode.dataset.id)
+        e.preventDefault();
+        this.removeTodo(todoId);
+      }
+
+      removeTodo(id) {
+        this.todos = this.todos.filter(todo => {
+          return todo.id !== id
+        });
+
+        this.hidePrompt();
+        this.renderTodos();
+      }
+    }
+
+    new App()
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Part1</title>
+</head>
+<body>
+  <h1>Sign up Form</h1>
+  <form action="#" method="post" novalidate>
+    <p class="form_errors"></p>
+    <fieldset>
+      <dl>
+        <dt><label for="first_name">First Name</label></dt>
+        <dd>
+          <input type="text" id="first_name" name="first_name" pattern="[a-zA-Z]+" required>
+          <span class="error_message"></span>
+        </dd>
+        <dt><label for="last_name">Last Name</label></dt>
+        <dd>
+          <input type="text" id="last_name" name="last_name"  pattern="[a-zA-Z]+" required>
+          <span class="error_message"></span>
+        </dd>
+        <dt><label for="email">Email</label></dt>
+        <dd>
+          <input type="text" id="email" name="email" placeholder="someone@example.com" pattern=".+@.+" required>
+          <span class="error_message"></span>
+        </dd>
+        <dt><label for="password">Password</label></dt>
+        <dd>
+          <input type="password" id="password" name="password" pattern=".{10,}" required>
+          <span class="error_message"></span>
+        </dd>
+        <dt><label for="phone_number">Phone Number</label></dt>
+        <dd>
+          <input type="phone_number" id="phone_number" name="phone_number" placeholder="111-222-3333" pattern="\d{3}-\d{3}-\d{4}" >
+          <span class="error_message"></span>
+        </dd>
+        <dt><label for="credit_card">Credit Card</label></dt>
+        <dd>
+          <input type="text" class="card" id="card_1" name="credit_card" maxlength="4" pattern="^\d{4}$" required> -
+          <input type="text" class="card" id="card_2" name="credit_card" maxlength="4" pattern="^\d{4}$" required> -
+          <input type="text" class="card" id="card_3" name="credit_card" maxlength="4" pattern="^\d{4}$" required> -
+          <input type="text" class="card" id="card_4" name="credit_card" maxlength="4" pattern="^\d{4}$" required>
+          <span class="error_message"></span>
+        </dd>
+        <button type="submit">Sign Up</button>
+      </dl>
+    </fieldset>
+  </form>
+  <div id="data">
+    <h1>Serialized Form</h1>
+  </div>
+  <script>
+    class App {
+      constructor() {
+        this.form = document.querySelector('form');
+        this.formErrorMsg = document.querySelector('.form_errors')
+        document.addEventListener('focusin', e => {
+          if (e.target.tagName === 'INPUT') {
+            this.handleFocus(e)
+          }
+        })
+
+        document.addEventListener('focusout', e => {
+          if (e.target.tagName === 'INPUT') {
+            this.handleBlur(e)
+          }
+        })
+
+        document.querySelector('form').addEventListener('submit', e => {
+          this.handleSubmit(e);
+        })
+
+        document.addEventListener('keypress', e => {
+          if (e.target.tagName === 'INPUT') {
+            if (e.target.id === 'first_name' || e.target.id === 'last_name') {
+              this.handleNameInput(e)
+            } else if (e.target.classList.contains('card')) {
+              this.handleCardInput(e)
+            }
+          }
+        })
+
+        document.addEventListener('keyup', e => {
+          if (["card_1", "card_2", "card_3"].includes(e.target.id)) {
+            this.handleTab(e);
+          }
+        })
+      }
+
+      handleTab(e) {
+        if (e.target.value.length === 4) {
+            e.target.nextElementSibling.focus();
+          }
+      }
+
+      handleCardInput(e) {
+        if (!e.key.match(/[0-9]/)) {
+          e.preventDefault();
+        }
+      }
+
+      handleFocus(e) {
+        let input = e.target;
+        input.nextElementSibling.textContent = '';
+        input.classList.remove('error_input');
+      }
+
+      handleNameInput(e) {
+        if (!e.key.match(/[A-Z]/i)) {
+          e.preventDefault();
+        }
+      }
+
+      handleBlur(e) {
+        let input = e.target;
+        if (this.form.checkValidity()) {
+          document.querySelector('.form_errors').textContent ='';
+        }
+
+        this.validateInput(input);
+      }
+
+      validateInput(input) {
+        if (input.validity.valueMissing) {
+          this.handleValueAbsence(input);
+          return false;
+        } else if (input.validity.patternMismatch) {
+          this.handlePatternMismatch(input);
+          return false;
+        }
+        return true;
+      }
+
+      handleValueAbsence(input) {
+        input.parentNode.lastElementChild.textContent = "Value is required"
+        input.classList.add("error_input")
+        console.log(input.classList)
+      }
+
+      handlePatternMismatch(input) {
+        input.parentNode.lastElementChild.textContent = "Input is in incorrect format"
+        input.classList.add("error_input")
+      }
+
+      validateInputs() {
+        [...document.querySelectorAll('input')].forEach(input => {
+          this.validateInput(input);
+        })
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+        if (this.form.checkValidity()) {
+          this.formErrorMsg.textContent = '';
+          let data = new FormData(this.form);
+          let url = [];
+          let card = '';
+          for (let pair of data.entries()) {
+            if (pair[0] === 'credit_card') {
+              card += pair[1];
+            } else {
+              url.push(pair[0] + '=' + pair[1]);
+            }
+          }
+          url.push('credit_card=' + card);
+          url = url.join('&')
+          url = url.replace('@', '%40')
+          let p = document.createElement('p');
+          p.textContent = url;
+          document.querySelector('#data').appendChild(p);
+        } else {
+          this.formErrorMsg.textContent = 'form cannot be submitted until error fixed';
+          this.validateInputs();
+          return false;
+        }
+      }
+
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      new App();
+    })
+    
+  </script>
+</body>
+</html>

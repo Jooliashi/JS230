@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>StopWatch</title>
+</head>
+<body>
+  <div id="app">
+    <div class="timer">
+      <p>
+      <span class="hours">00</span>
+      :
+      <span class="mins">00</span>
+      :
+      <span class="secs">00</span>
+      :
+      <span class="centisecs">00</span>
+      </p>
+    </div>
+    <div class="controls">
+      <button class="toggle">Start</button>
+      <button class="reset">Reset</button>
+    </div>
+  </div>
+  <script>
+    class App {
+      constructor() {
+        this.toggle = document.querySelector('.toggle');
+        this.resetButton = document.querySelector('.reset');
+        this.isOn = false;
+        this.centiSecs = 0;
+        this.secs = 0;
+        this.mins = 0;
+        this.hours = 0;
+        this.toggle.addEventListener('click', this.startStop.bind(this));
+        this.resetButton.addEventListener('click', this.reset.bind(this));
+      }
+      
+      startStop() {
+        if (this.isOn) {
+          this.stop()
+        } else {
+          this.start()
+        }
+      }
+
+      start() {
+        this.interval = setInterval(this.addTime.bind(this), 10);
+        this.toggle.textContent = 'Stop'
+        this.isOn = true;
+      }
+
+      stop() {
+        clearInterval(this.interval);
+        this.toggle.textContent = 'Start';
+        this.isOn = false;
+      }
+
+      addTime() {
+        this.centiSecs++;
+        if (this.centiSecs === 100) {
+          this.centiSecs = 0;
+          this.secs++;
+
+          if (this.secs === 60) {
+            this.secs = 0;
+            this.mins++;
+          
+            if (this.mins === 60) {
+              this.mins = 0;
+              this.hours++;
+            }
+          }
+        }
+        this.displayTime();
+      }
+
+      reset() {
+        this.isOn && this.stop();
+
+        this.centiSecs = 0;
+        this.secs = 0;
+        this.mins = 0;
+        this.hours = 0;
+
+        this.displayTime();
+      }
+
+      displayTime() {
+        let centiSecs = this.centiSecs < 10 ? '0' + this.centiSecs : this.centiSecs;
+        document.querySelector('.centisecs').textContent = centiSecs;
+        document.querySelector('.secs').textContent = this.secs < 10 ? '0' + this.secs : this.secs;
+        document.querySelector('.mins').textContent = this.mins < 10 ? '0' + this.mins : this.mins;
+        document.querySelector('.hours').textContent = this.hours < 10 ? '0' + this.hours : this.hours;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      new App();
+    })
+  </script>
+</body>
+</html>

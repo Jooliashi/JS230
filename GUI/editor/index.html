@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/4d71a64e8e.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>Editor</title>
+</head>
+<body>
+  <h1>Rich Text Editor</h1>
+  <div id="editor">
+    <div class="buttons">
+      <button class="bold fa fa-bold"></button>
+      <button class="italicize fa fa-italic"></button>
+      <button class="underline fa fa-underline"></button>
+      <button class="strikethrough fa fa-strikethrough"></button>
+      <button class="link fa fa-link"></button>
+      <button class="ul fa fa-list-ul"></button>
+      <button class="ol fa fa-list-ol"></button>
+      <button class="al_left fa fa-align-left"></button>
+      <button class="al_right fa fa-align-right"></button>
+      <button class="al_center fa fa-align-center"></button>
+      <button class="al_justify fa fa-align-justify"></button>
+    </div>
+    <div class="text_box" contenteditable="true"></div>
+  </div>
+  <script>
+    class App {
+      constructor() {
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('bold')) {
+            this.handleBold(e);
+          } else if (e.target.classList.contains('italicize')) {
+            this.handleItalicize(e);
+          } else if (e.target.classList.contains('underline')) {
+            this.handleUnderline(e);
+          } else if (e.target.classList.contains('strikethrough')) {
+            this.handleStrikeThrough(e);
+          } else if (e.target.classList.contains('link')) {
+            this.handleLink(e);
+          } else if (e.target.classList.contains('ul')) {
+            this.insertUL(e);
+          } else if (e.target.classList.contains('ol')) {
+            this.insertOL(e);
+          }
+        })
+      }
+
+      handleBold(e) {
+        document.querySelector('.bold').classList.toggle('pushed');
+        document.execCommand('bold');
+      }
+
+      handleItalicize(e) {
+        document.querySelector('.italicize').classList.toggle('pushed');
+        document.execCommand('italic');
+      }
+
+      handleUnderline(e) {
+        document.querySelector('.underline').classList.toggle('pushed');
+        document.execCommand('underline');
+      }
+
+      handleStrikeThrough(e) {
+        document.querySelector('.strikethrough').classList.toggle('pushed');
+        document.execCommand('strikeThrough');
+      }
+
+      handleLink(e) {
+        let selection = document.getSelection().toString();
+        let url;
+        if (!selection) return;
+
+        url = prompt('Enter the URL to link to: ');
+        this.createLink(url, e);
+      }
+
+      createLink(url, e) {
+        if (!url) return;
+        document.execCommand('createLink', false, url);
+        document.querySelector('.link').classList.toggle('pushed');
+      }
+
+      insertUL(e) {
+        document.execCommand('insertUnorderedList');
+        document.querySelector('.ul').classList.toggle('pushed');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new App();
+    })
+  </script>
+</body>
+</html>

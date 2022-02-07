@@ -1,0 +1,79 @@
+body {
+  background-color: darkgreen;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  color: white;
+}
+
+#todos {
+  width: 600px;
+  list-style: none;
+  
+}
+
+#todos li {
+  padding: 16px 20px 0 20px;
+  box-sizing: border-box;
+  background-color: white;
+  color: #222;
+  margin-bottom: 20px;
+  height: 50px;
+  text-indent: 0;
+  border-radius: 5px;
+  position: relative;
+  font-size: 20px;
+}
+
+.confirm_prompt{
+  visibility: hidden;
+
+  width: 500px;
+  height: 150px;
+  position: absolute;
+  z-index: 10;
+  top: 150px;
+  left: 50%;
+  margin-left: -200px;
+  border: 1px solid #ccc;
+  background: #eee;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 20px;
+}
+.confirm_prompt .actions {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+}
+.confirm .actions a {
+  display: inline-block;
+  width: 60px;
+  height: 25px;
+  text-align: center;
+  padding-top: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: white;
+}
+
+.confirm_yes {
+  background: red;
+}
+
+.confirm_no {
+  background: green;
+}
+
+.context_menu {
+  background: #eee;
+  width: 150px;
+  position: absolute;
+}
+
+.delete {
+  cursor: pointer;
+  background: rosybrown;
+}

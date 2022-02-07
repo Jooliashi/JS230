@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Calculator</title>
+</head>
+<body>
+  <div id="calculator">
+    <div id="screen">
+      <p class="calculation"></p>
+      <p class="current_num">0</p>
+    </div>
+    <div id="buttons">
+      <a href="#" id="ce" class="control">CE</a>
+      <a href="#" id="c" class="control">C</a>
+      <a href="#" id="neg" class="control">NEG</a>
+      <a href="#" class="op">/</a>
+      <a href="#" class="digit">7</a>
+      <a href="#" class="digit">8</a>
+      <a href="#" class="digit">9</a>
+      <a href="#" class="op">x</a>
+      <a href="#" class="digit">4</a>
+      <a href="#" class="digit">5</a>
+      <a href="#" class="digit">6</a>
+      <a href="#" class="op">-</a>
+      <a href="#" class="digit">1</a>
+      <a href="#" class="digit">2</a>
+      <a href="#" class="digit">3</a>
+      <a href="#" class="op">+</a>
+      <a href="#" class="digit">0</a>
+      <a href="#" class="dot">.</a>
+      <a href="#" class="op">%</a>
+      <a href="#" class="result_button">=</a>
+    </div>
+  </div>
+  <script>
+    class App{
+      constructor() {
+        this.currentNum = document.querySelector('.current_num');
+        this.calculation = document.querySelector('.calculation');
+        this.buttons = document.querySelector('#buttons')
+        this.buttons.addEventListener('click', (e) => {
+          if (e.target.classList.contains('digit')) {
+            this.handleDigit(e);
+          } else if (e.target.classList.contains('op')) {
+            this.handleOperation(e);
+          } else if (e.target.classList.contains('result_button')) {
+            this.handleEqual(e);
+          } else if (e.target.classList.contains('dot')) {
+            this.handleDot(e);
+          } else if (e.target.id === "neg") {
+            this.handleNeg(e);
+          } else if (e.target.id === 'c') {
+            this.handleC(e);
+          } else {
+            this.handleCe(e);
+          }
+        })
+      }
+
+      handleDigit(e) {
+        if (this.currentNum.textContent === '0') {
+          this.currentNum.textContent = e.target.textContent;
+        } else {
+          this.currentNum.textContent += e.target.textContent;
+        }
+      }
+
+      handleOperation(e) {
+        this.calculation.textContent += this.currentNum.textContent + ' ';
+        this.calculation.textContent += e.target.textContent + ' ';
+        this.currentNum.textContent = 0;
+      }
+
+      handleEqual(e) {
+        this.calculation.textContent += this.currentNum.textContent;
+        this.calculate();
+      }
+
+      calculate() {
+        let math = this.calculation.textContent.replace('x', '*');
+        this.currentNum.textContent = String(eval(math))
+        this.calculation.textContent = '';
+      }
+
+      handleDot(e) {
+        if (!this.currentNum.textContent.match(/\./)) {
+          this.currentNum.textContent += '.'
+        }
+      }
+
+      handleNeg(e) {
+        if (this.currentNum.textContent !== '0') {
+          this.currentNum.textContent = '-' + this.currentNum.textContent;
+        }
+      }
+
+      handleC(e) {
+        this.currentNum.textContent = '0';
+        this.calculation.textContent = '';
+      }
+
+      handleCe(e) {
+        this.currentNum.textContent = '0';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      new App()
+    })
+  </script>
+</body>
+</html>

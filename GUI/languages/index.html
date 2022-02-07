@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Languages</title>
+</head>
+<body>
+  <h1>Programming Languages</h1>
+  <div id="container">
+    <div class="lang" data-lang = "Ruby">
+      <h2>Ruby</h2>
+      <p></p>
+      <a href="#" class="more">Show More</a>
+    </div>
+    <div class="lang" data-lang = "JavaScript">
+      <h2>JavaScript</h2>
+      <p></p>
+      <a href="#" class="more">Show More</a>
+    </div>
+    <div class="lang" data-lang="Lisp">
+      <h2>Lisp</h2>
+      <p></p>
+      <a href="#" class="more">Show More</a>
+    </div>
+  </div>
+  <script>
+    const languages = [
+    {
+      name: 'Ruby',
+      description: 'Ruby is a dynamic, reflective, object-oriented, ' +
+      'general-purpose programming language. It was designed and developed in the mid-1990s ' +
+      'by Yukihiro Matsumoto in Japan. According to its creator, Ruby was influenced by Perl, ' +
+      'Smalltalk, Eiffel, Ada, and Lisp. It supports multiple programming paradigms, ' +
+      'including functional, object-oriented, and imperative. It also has a dynamic type ' +
+      'system and automatic memory management.'
+    },
+
+    {
+      name: 'JavaScript',
+      description: 'JavaScript is a high-level, dynamic, untyped, and interpreted ' +
+      'programming language. It has been standardized in the ECMAScript language ' +
+      'specification. Alongside HTML and CSS, JavaScript is one of the three core ' +
+      'technologies of World Wide Web content production; the majority of websites employ ' +
+      'it, and all modern Web browsers support it without the need for plug-ins. JavaScript ' +
+      'is prototype-based with first-class functions, making it a multi-paradigm language, ' +
+      'supporting object-oriented, imperative, and functional programming styles.'
+    },
+
+    {
+      name: 'Lisp',
+      description: 'Lisp (historically, LISP) is a family of computer programming languages ' +
+      'with a long history and a distinctive, fully parenthesized prefix notation. ' +
+      'Originally specified in 1958, Lisp is the second-oldest high-level programming ' +
+      'language in widespread use today. Only Fortran is older, by one year. Lisp has changed ' +
+      'since its early days, and many dialects have existed over its history. Today, the best '+
+      'known general-purpose Lisp dialects are Common Lisp and Scheme.'
+    }
+    ];
+    document.addEventListener('DOMContentLoaded', () => {
+      languages.forEach(lang => {
+        let p = document.querySelector(`[data-lang*=${lang.name}] > p`)
+        p.textContent = lang.description.slice(0, 121) + '...';
+      })
+    })
+
+    function changeButton(button) {
+      button.textContent = button.textContent === 'Show More' ? 'Show Less' : 'Show More';
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A') {
+        let description = languages.filter(lang => lang.name === e.target.parentNode.dataset.lang)[0].description
+        let p = e.target.previousElementSibling;
+        if (e.target.textContent === 'Show More') {
+          changeButton(e.target)
+          let newDes = description;
+          p.textContent = newDes;
+        } else {
+          let newDes = description.slice(0, 121)
+          p.textContent = newDes;
+        }
+      }
+    })
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+body {
+  background: yellowgreen;
+  color: white;
+}
+
+#app {
+  width: 540px;
+  margin: 200px auto;
+}
+
+.timer {
+  font-size: 78px;
+  font-weight: bold;
+}
+
+.controls {
+  width: 220px;
+  margin: 0 auto;
+}
+
+.controls button {
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  padding: 10px 30px;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+  outline: 0px;
+}
